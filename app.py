@@ -5,6 +5,8 @@ from src.pipeline import MediSyncPipeline
 
 from src.auth import login_form, check_subscription, create_portal_session
 
+
+
 st.set_page_config(page_title="MediSync SaaS", page_icon="🏥", layout="wide")
 
 # --- AUTHENTICATION GATE ---
@@ -137,6 +139,9 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Initialize Page State
+if "page" not in st.session_state:
+    st.session_state.page = "generator"
 
 # --- Sidebar ---
 with st.sidebar:
@@ -157,6 +162,7 @@ with st.sidebar:
             st.markdown(f'<meta http-equiv="refresh" content="0;url={portal_url}">', unsafe_allow_html=True)
         else:
             st.sidebar.error("Could not create billing portal.")
+            
     st.markdown("---")
     
     # 1. API Key
@@ -175,7 +181,7 @@ with st.sidebar:
         advocate_title = st.text_input("Title", value="Medical Billing Advocate")
         advocate_address = st.text_area("Facility / Address", value="Mailing Address")
 
-# --- Main Logic ---
+# --- Main Generator Logic ---
 st.title("📑 Insurance Appeal Generator")
 st.markdown("""
     **Securely process denial letters.** Upload the insurance denial PDF to generate a formal, evidence-based appeal letter automatically drafted by our secure HIPAA-compliant engine.
@@ -234,6 +240,7 @@ if uploaded_file:
         res = st.session_state["appeal_result"]
         
         st.success("✅ Appeal Generated!")
+        st.balloons()
         
         col1, col2 = st.columns([1, 1])
         with col1:

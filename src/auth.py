@@ -1,5 +1,7 @@
 import streamlit as st
 import time
+import re
+import string
 from supabase import create_client, Client
 import stripe
 
@@ -35,7 +37,7 @@ def landing_page_css():
         
         /* Typography - White with correct weights */
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        html, body, [class*="css"], .stMarkdown, .stButton, div[role="dialog"] {
+        html, body, [class*="css"], .stMarkdown, .stButton {
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: #ffffff !important;
         }
@@ -48,6 +50,11 @@ def landing_page_css():
         }
         div[data-testid="column"] button:hover {
             transform: translateY(-2px);
+        }
+        
+        /* Specific Fix for Dialog Text visibility (Markdown content) */
+        div[role="dialog"] p, div[role="dialog"] span, div[role="dialog"] div {
+            color: #1f2937 !important;
         }
         
         /* Header Logo Brightness */
@@ -97,9 +104,41 @@ def landing_page_css():
             padding: 10px 15px;
         }
         
-        /* Force Button Text Color */
+        /* --- BUTTON STYLES --- */
+        
+        /* 1. Default Buttons (Footer Links) -> Ghost Style */
+        .stButton > button {
+            background: transparent !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: #ffffff !important;
+            box-shadow: none !important;
+            transition: all 0.3s ease;
+        }
+        .stButton > button:hover {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: #ffffff !important;
+            transform: translateY(-2px);
+        }
         .stButton > button p {
-            color: white !important;
+             color: #ffffff !important;
+        }
+
+        /* 2. Primary Buttons (Login / Signup) -> Blue Pill Style */
+        /* Target buttons with specific kind or class if possible, or fallback to the specific columns */
+        div[data-testid="column"] .stButton > button[kind="primary"],
+        button[kind="primary"] {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; 
+            color: #ffffff !important; 
+            border: none !important;
+            padding: 0.6rem 1.2rem;
+            border-radius: 9999px !important;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3) !important;
+        }
+        div[data-testid="column"] .stButton > button[kind="primary"]:hover,
+        button[kind="primary"]:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+            box-shadow: 0 8px 15px rgba(37, 99, 235, 0.4) !important;
+            transform: translateY(-2px);
         }
         
         /* Hide Decorations */
@@ -109,15 +148,55 @@ def landing_page_css():
         </style>
     """, unsafe_allow_html=True)
 
+
+# --- SECURITY VALIDATORS ---
+def validate_email(email):
+    # RFC 5322 compliant regex for email validation
+    email_regex = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+    return re.match(email_regex, email) is not None
+
+def validate_password(password):
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long."
+    if not any(char.isdigit() for char in password):
+        return False, "Password must contain at least one number."
+    if not any(char in string.punctuation for char in password):
+        return False, "Password must contain at least one special character (!@#$%^&*)."
+    return True, ""
+
+# --- HELPER: FRIENDLY ERRORS ---
+def format_error_message(e):
+    msg = str(e).lower()
+    if "invalid login credentials" in msg:
+        return "Incorrect email or password."
+    if "user already registered" in msg:
+        return "This email is already registered. Please log in."
+    if "email address" in msg and "invalid" in msg:
+        return "Please enter a valid email address."
+    if "password" in msg and "character" in msg:
+        return "Password does not meet requirements."
+    if "rate limit" in msg:
+        return "Too many attempts. Please try again later."
+    return "Something went wrong. Please try again."
+
 @st.dialog("Log In")
 def login_dialog():
     supabase, _ = init_services()
     import types
     
-    email = st.text_input("Email", key="login_email")
-    password = st.text_input("Password", type="password", key="login_pass")
+    email = st.text_input("Email", key="login_email").strip()
+    password = st.text_input("Password", type="password", key="login_pass").strip()
     
     if st.button("Sign In", type="primary", use_container_width=True):
+         # Input Validation
+         if not email or not password:
+             st.markdown(f"<small style='color: #ef4444; font-weight: 500;'>⚠️ Please enter both email and password.</small>", unsafe_allow_html=True)
+             return
+             
+         if not validate_email(email):
+             st.markdown(f"<small style='color: #ef4444; font-weight: 500;'>⚠️ Invalid email format.</small>", unsafe_allow_html=True)
+             return
+
          if not supabase:
              # Dev Fallback
              st.session_state.user = types.SimpleNamespace(email="dev@local.com", id="dev_123")
@@ -128,23 +207,65 @@ def login_dialog():
                 st.session_state.user = res.user
                 st.rerun()
             except Exception as e:
-                st.error(f"Login Failed: {str(e)}")
+                # Friendly Error
+                friendly_msg = format_error_message(e)
+                st.markdown(f"<small style='color: #ef4444; font-weight: 500;'>⚠️ {friendly_msg}</small>", unsafe_allow_html=True)
 
 @st.dialog("Start Free Trial")
 def signup_dialog():
     supabase, _ = init_services()
     
     st.markdown("Create an account to start your **7-day free trial**.")
-    new_email = st.text_input("Email Address", key="signup_email")
-    new_pass = st.text_input("Password", type="password", key="signup_pass")
+    new_email = st.text_input("Email Address", key="signup_email").strip()
+    
+    # Real-time Email Validation
+    if new_email and not validate_email(new_email):
+        st.markdown(f"<small style='color: #ef4444; font-weight: 500;'>⚠️ Invalid email address</small>", unsafe_allow_html=True)
+        
+    new_pass = st.text_input("Password", type="password", key="signup_pass").strip()
+    
+    # Real-time Password Validation Feedback
+    if new_pass:
+        is_valid_pass, rules_msg = validate_password(new_pass)
+        if not is_valid_pass:
+            # Subtle text error instead of big box
+            st.markdown(f"<small style='color: #ef4444; font-weight: 500;'>⚠️ {rules_msg}</small>", unsafe_allow_html=True)
+        else:
+             st.markdown(f"<small style='color: #22c55e; font-weight: 500;'>✅ Strong password</small>", unsafe_allow_html=True)
+    else:
+        st.caption("Requirements: 8+ chars, 1 number, 1 special char (!@#$%^&*)")
     
     if st.button("Create Account & Start Trial", type="primary", use_container_width=True):
+         # Input Validation checks (Submit time)
+         if not validate_email(new_email):
+             return # Already shown
+
+         is_valid_pass, rules_msg = validate_password(new_pass)
+         if not is_valid_pass:
+             return # Already shown
+
          if supabase:
             try:
                 supabase.auth.sign_up({"email": new_email, "password": new_pass})
                 st.success("✅ Confirmation email sent! Please check your inbox.")
             except Exception as e:
-                st.error(f"Signup Error: {str(e)}")
+                friendly_msg = format_error_message(e)
+                st.markdown(f"<small style='color: #ef4444; font-weight: 500;'>⚠️ {friendly_msg}</small>", unsafe_allow_html=True)
+
+# --- MODALS FOR FOOTER LINKS ---
+from src.security_content import get_about_content, get_addendum_content, get_compliance_content
+
+@st.dialog("About MediSync")
+def about_modal():
+    st.markdown(get_about_content(), unsafe_allow_html=True)
+
+@st.dialog("Data Security Addendum")
+def addendum_modal():
+    st.markdown(get_addendum_content(), unsafe_allow_html=True)
+
+@st.dialog("Security Compliance")
+def compliance_modal():
+    st.markdown(get_compliance_content(), unsafe_allow_html=True)
 
 def login_form():
     """Draws the Landing Page and triggers Dialogs."""
@@ -201,10 +322,23 @@ def login_form():
         </div>
         """, unsafe_allow_html=True)
         
-    # BADGE AT BOTTOM
+    # FOOTER LINKS (Badge Removed)
     st.markdown("<br><br><br>", unsafe_allow_html=True)
-    st.markdown('<div style="text-align: center;"><span class="badge">✨ v1.2 Now Available</span></div>', unsafe_allow_html=True)
+    c1, c2, c3, c4, c5 = st.columns([1, 1, 1, 1, 1]) # Centering logic
+    
+    with c2:
+        if st.button("About", use_container_width=True):
+            about_modal()
+            
+    with c3:
+        if st.button("Addendum", use_container_width=True):
+            addendum_modal()
 
+    with c4:
+        if st.button("Security Compliance", use_container_width=True):
+             compliance_modal()
+
+    st.markdown("<br><br>", unsafe_allow_html=True)
     return None
 
 def create_portal_session(user_email):
