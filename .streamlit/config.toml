@@ -12,9 +12,9 @@ showSidebarNavigation = false
 [theme]
 base = "light"
 primaryColor = "#2563eb"
-backgroundColor = "#4c1d95"
-secondaryBackgroundColor = "#8b5cf6"
-textColor = "#ffffff"
+backgroundColor = "#f8f9fc"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#0f172a"
 font = "sans serif"
 
 [browser]

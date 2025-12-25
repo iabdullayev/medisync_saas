@@ -35,6 +35,8 @@
             height: calc(100% + 55px);
             display: block;
             margin-bottom: -55px;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
         }
     </style>
 </head>
@@ -43,7 +45,8 @@
     <div class="iframe-container">
         <iframe
             src="https://medisyncsaas-9kystfrsmjuxgmh3ph6kah.streamlit.app/?embed=true&embed_options=show_toolbar_no"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
+            onload="this.style.opacity=1">
         </iframe>
     </div>
 </body>

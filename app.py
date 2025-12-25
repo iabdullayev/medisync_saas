@@ -19,7 +19,6 @@ st.markdown("""
     /* Global Styles */
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', sans-serif;
-        color: #0f172a; /* Force Dark Text for App */
     }
     
     .main {
