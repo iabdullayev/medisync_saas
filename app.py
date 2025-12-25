@@ -211,8 +211,12 @@ if not api_key:
     st.warning("⚠️ Authentication Required. Please enter your API credentials in the sidebar.")
     st.stop()
 
-# Initialize Pipeline
-pipeline = MediSyncPipeline(api_key)
+# Initialize Cached Pipeline (Lazy Load)
+@st.cache_resource
+def get_pipeline(api_key):
+    if not api_key:
+        return None
+    return MediSyncPipeline(api_key)
 
 # Initialize Session State to hold data across re-runs
 if "appeal_result" not in st.session_state:
@@ -235,6 +239,7 @@ if uploaded_file:
                     tmp_path = tmp.name
 
                 # 2. Run Pipeline (PASSING THE SIDEBAR DATA NOW)
+                pipeline = get_pipeline(api_key)
                 result = pipeline.process_file(tmp_path, advocate_details={
                     "name": advocate_name,
                     "title": advocate_title,
