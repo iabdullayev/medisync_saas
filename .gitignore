@@ -1,7 +1,8 @@
 # Terraform
-infra/.terraform/
-*.tfstate
-*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
 
 # Python/System
 __pycache__/
@@ -11,3 +12,6 @@ app.zip
 .env
 venv/
 .streamlit/secrets.toml
+
+# Secrets
+*.tfvars

@@ -23,3 +23,9 @@ variable "www_subdomain" {
   default = "www.denialcopilot.com"
 }
 
+variable "groq_api_key" {
+  description = "Groq API Key (Sensitive)"
+  type        = string
+  sensitive   = true
+}
+

@@ -22,7 +22,3 @@ output "frontend_url" {
   value = "https://${var.www_subdomain}"
 }
 
-output "app_runner_dns_validation" {
-  description = "CNAME records required for App Runner custom domain validation"
-  value       = aws_apprunner_custom_domain_association.domain.certificate_validation_records
-}
