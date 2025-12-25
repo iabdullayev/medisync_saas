@@ -9,29 +9,7 @@ from src.auth import login_form, check_subscription, create_portal_session
 
 st.set_page_config(page_title="MediSync SaaS", page_icon="🏥", layout="wide")
 
-# --- AUTHENTICATION GATE ---
-# This must run before anything else to protect the app
-user = login_form()
-if not user:
-    st.stop()
-
-# COMPATIBILITY FIX: Ensure user is an object, not a dict (handles legacy session state)
-import types
-if isinstance(user, dict):
-    user = types.SimpleNamespace(**user)
-
-# Check Subscription
-is_subscribed = check_subscription(user.email)
-if not is_subscribed:
-    payment_link = st.secrets.get("STRIPE_PAYMENT_LINK", "https://stripe.com")
-    
-    st.warning("💳 Subscription Required")
-    st.markdown("Your 7-day free trial has expired or you do not have an active subscription.")
-    st.markdown(f"[Manage Subscription]({payment_link})") 
-    st.stop()
-
-
-# --- CSS for Production Polish ---
+# --- CSS for Production Polish (INJECTED FIRST TO PREVENT FLASH) ---
 st.markdown("""
     <style>
     /* Import Modern Font */
@@ -43,25 +21,36 @@ st.markdown("""
     }
     
     .main {
-        background-color: #f8f9fc; /* Slightly lighter/cooler grey */
+        background-color: #f8f9fc;
     }
 
     /* HIDE STREAMLIT BRANDING & UI ELEMENTS */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    #MainMenu {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    header {visibility: hidden !important;}
     
     /* Hide Fullscreen Button on Images/Plots */
-    button[title="View fullscreen"] {
-        visibility: hidden;
-        display: none;
+    button[title="View fullscreen"], [data-testid="StyledFullScreenButton"] {
+        visibility: hidden !important;
+        display: none !important;
     }
     
     /* Hide the top-right decoration/deploy button if visible */
-    .stDeployButton {
-        display: none;
+    .stDeployButton, [data-testid="stDecoration"] {
+        display: none !important;
+        visibility: hidden !important;
     }
     
+    /* Hide the Status Widget (top right running man) */
+    .stStatusWidget {
+        visibility: hidden !important;
+    }
+    
+    /* Hide Streamlit Toolbar */
+    [data-testid="stToolbar"] {
+        display: none !important;
+    }
+
     /* Typography */
     h1, h2, h3 {
         font-family: 'Plus Jakarta Sans', sans-serif;
@@ -91,7 +80,6 @@ st.markdown("""
     
     /* Fluid 'Squicle' Button Style (Brightened) */
     .stButton > button {
-        /* Brighter, more visible blue gradient */
         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); 
         color: #ffffff !important; 
         border: none;
@@ -99,12 +87,9 @@ st.markdown("""
         font-size: 16px;
         font-weight: 600;
         letter-spacing: 0.3px;
-        
-        /* The 'Squicle' Feel */
         border-radius: 12px; 
         box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -1px rgba(37, 99, 235, 0.1);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        
         width: 100%;
         position: relative;
         overflow: hidden;
@@ -112,35 +97,27 @@ st.markdown("""
         align-items: center;
         justify-content: center;
     }
-
-    /* FORCE TEXT COLOR ON INTERNAL ELEMENTS */
     .stButton > button p, .stButton > button * {
         color: #ffffff !important;
     }
-    
-    /* Hover State - Lift and Glow */
     .stButton > button:hover {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); /* Slightly lighter on hover */
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         transform: translateY(-2px);
         box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3), 0 4px 6px -2px rgba(37, 99, 235, 0.15);
         color: #ffffff !important;
     }
-    
-    /* Active State - Click */
     .stButton > button:active {
         transform: translateY(0px);
         box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
     }
     
-    /* Sidebar Modernization & Fixes */
+    /* Sidebar Modernization */
     section[data-testid="stSidebar"] {
         background-color: #ffffff;
         box-shadow: 4px 0 24px rgba(0,0,0,0.02);
         border-right: 1px solid #f1f5f9;
-        padding-top: 2rem; /* Fix for cut-off icon */
+        padding-top: 2rem;
     }
-    
-    /* Fix for cut-off sidebar content if needed */
     div[data-testid="stSidebarUserContent"] {
         padding-top: 2rem;
     }
@@ -154,6 +131,29 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
+# --- AUTHENTICATION GATE ---
+# This must run before anything else to protect the app
+user = login_form()
+if not user:
+    st.stop()
+
+# COMPATIBILITY FIX: Ensure user is an object, not a dict (handles legacy session state)
+import types
+if isinstance(user, dict):
+    user = types.SimpleNamespace(**user)
+
+# Check Subscription
+is_subscribed = check_subscription(user.email)
+if not is_subscribed:
+    payment_link = st.secrets.get("STRIPE_PAYMENT_LINK", "https://stripe.com")
+    
+    st.warning("💳 Subscription Required")
+    st.markdown("Your 7-day free trial has expired or you do not have an active subscription.")
+    st.markdown(f"[Manage Subscription]({payment_link})") 
+    st.stop()
+
+
 
 # Initialize Page State
 if "page" not in st.session_state:
