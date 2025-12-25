@@ -11,10 +11,11 @@ st.set_page_config(page_title="MediSync SaaS", page_icon="🏥", layout="wide")
 
 # --- CSS for Production Polish (INJECTED FIRST TO PREVENT FLASH) ---
 st.markdown("""
-    <style>
-    /* Import Modern Font */
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <style>
     /* Global Styles */
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', sans-serif;
@@ -30,7 +31,9 @@ st.markdown("""
     header {visibility: hidden !important;}
     
     /* Hide Fullscreen Button on Images/Plots */
-    button[title="View fullscreen"], [data-testid="StyledFullScreenButton"] {
+    button[title="View fullscreen"], 
+    [data-testid="StyledFullScreenButton"],
+    [data-testid="stImage"] button {
         visibility: hidden !important;
         display: none !important;
     }
@@ -184,7 +187,7 @@ with st.sidebar:
     # 1. API Key
     if "GROQ_API_KEY" in st.secrets:
         api_key = st.secrets["GROQ_API_KEY"]
-        st.success("🔒 Secure Connection Active")
+        # Removed "Secure Connection Active" alert to prevent flash
     else:
         api_key = st.text_input("Enter API Key", type="password", help="Enter your Groq API Key for secure processing.")
 

@@ -7,9 +7,23 @@ font = "sans serif"
 
 [server]
 headless = true
+port = 8501
 enableCORS = false
 enableXsrfProtection = false
-address = "0.0.0.0"
+enableWebsocketCompression = false
+
+[client]
+toolbarMode = "viewer"
+showSidebarNavigation = false
+
+[theme]
+base = "light"
+primaryColor = "#2563eb"
+backgroundColor = "#f8f9fc"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#0f172a"
+font = "sans serif"
+"0.0.0.0"
 port = 8501
 
 [browser]

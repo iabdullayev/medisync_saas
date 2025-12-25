@@ -211,6 +211,160 @@ resource "aws_acm_certificate" "api" {
 # ACM for Root Domain (Needed for CloudFront)
 ########################
 
+resource "aws_acm_certificate" "www" {
+  domain_name       = var.www_subdomain
+  validation_method = "DNS"
+  provider          = aws.us-east-1
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "aws_route53_record" "www_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.www.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = aws_route53_zone.public.zone_id
+}
+
+resource "aws_acm_certificate_validation" "www" {
+  provider                = aws.us-east-1
+  certificate_arn         = aws_acm_certificate.www.arn
+  validation_record_fqdns = [for record in aws_route53_record.www_validation : record.fqdn]
+}
+
+########################
+# S3 Bucket for WWW Content (Iframe Embedding)
+########################
+
+resource "aws_s3_bucket" "www_content" {
+  bucket = "www.${var.root_domain}-content"
+}
+
+resource "aws_s3_bucket_website_configuration" "www_content" {
+  bucket = aws_s3_bucket.www_content.id
+
+  index_document {
+    suffix = "index.html"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "www_content" {
+  bucket = aws_s3_bucket.www_content.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_policy" "www_content" {
+  bucket = aws_s3_bucket.www_content.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "PublicReadGetObject"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.www_content.arn}/*"
+      },
+    ]
+  })
+
+  depends_on = [aws_s3_bucket_public_access_block.www_content]
+}
+
+# Upload index.html (The Iframe)
+resource "aws_s3_object" "www_index" {
+  bucket       = aws_s3_bucket.www_content.id
+  key          = "index.html"
+  source       = "../public/index.html"
+  content_type = "text/html"
+  etag         = filemd5("../public/index.html")
+}
+
+########################
+# CloudFront for WWW (Serving S3 Iframe)
+########################
+
+resource "aws_cloudfront_distribution" "www_proxy" {
+  enabled             = true
+  is_ipv6_enabled     = true
+  comment             = "WWW Iframe Hosting"
+  aliases             = [var.www_subdomain]
+  price_class         = "PriceClass_100"
+  default_root_object = "index.html"
+
+  origin {
+    domain_name = aws_s3_bucket_website_configuration.www_content.website_endpoint
+    origin_id   = "S3Content"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  default_cache_behavior {
+    allowed_methods  = ["GET", "HEAD"]
+    cached_methods   = ["GET", "HEAD"]
+    target_origin_id = "S3Content"
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+    compress               = true
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    acm_certificate_arn      = aws_acm_certificate_validation.www.certificate_arn
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
+  }
+}
+
+# WWW DNS Record (Alias to CloudFront)
+resource "aws_route53_record" "www" {
+  zone_id = aws_route53_zone.public.zone_id
+  name    = var.www_subdomain
+  type    = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.www_proxy.domain_name
+    zone_id                = aws_cloudfront_distribution.www_proxy.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
 resource "aws_acm_certificate" "root" {
   domain_name       = var.root_domain
   validation_method = "DNS"
