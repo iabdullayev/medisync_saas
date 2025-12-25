@@ -45,6 +45,22 @@ st.markdown("""
     .main {
         background-color: #f8f9fc; /* Slightly lighter/cooler grey */
     }
+
+    /* HIDE STREAMLIT BRANDING & UI ELEMENTS */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Hide Fullscreen Button on Images/Plots */
+    button[title="View fullscreen"] {
+        visibility: hidden;
+        display: none;
+    }
+    
+    /* Hide the top-right decoration/deploy button if visible */
+    .stDeployButton {
+        display: none;
+    }
     
     /* Typography */
     h1, h2, h3 {
