@@ -185,10 +185,9 @@ with st.sidebar:
     st.markdown("---")
     
     # 1. API Key
-    if "GROQ_API_KEY" in st.secrets:
-        api_key = st.secrets["GROQ_API_KEY"]
-        # Removed "Secure Connection Active" alert to prevent flash
-    else:
+    # 1. API Key
+    api_key = st.secrets.get("GROQ_API_KEY", "")
+    if not api_key:
         api_key = st.text_input("Enter API Key", type="password", help="Enter your Groq API Key for secure processing.")
 
     st.markdown("---")
