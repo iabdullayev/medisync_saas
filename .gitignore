@@ -1,0 +1,13 @@
+# Terraform
+infra/.terraform/
+*.tfstate
+*.tfstate.backup
+
+# Python/System
+__pycache__/
+*.pyc
+app.zip
+.DS_Store
+.env
+venv/
+.streamlit/secrets.toml

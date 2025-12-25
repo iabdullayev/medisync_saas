@@ -1,0 +1,14 @@
+.git
+.streamlit/secrets.toml
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.db
+.DS_Store
+infra/
+package/
+app.zip
+*.pdf
+ Sarah_Connor_Denial_Letter.pdf
+medisync_saas.zip
