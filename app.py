@@ -208,7 +208,7 @@ st.markdown("""
 st.markdown("---")
 
 if not api_key:
-    st.warning("⚠️ Authentication Required. Please enter your API credentials in the sidebar.")
+    # st.warning("⚠️ Authentication Required. Please enter your API credentials in the sidebar.")
     st.stop()
 
 # Initialize Cached Pipeline (Lazy Load)

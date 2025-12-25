@@ -13,7 +13,7 @@ def init_services():
     STRIPE_KEY = st.secrets.get("STRIPE_API_KEY")
     
     if not SUPABASE_URL or not SUPABASE_KEY or not STRIPE_KEY:
-        st.warning("⚠️ Monetization keys missing in secrets.toml. Please configure Supabase & Stripe.")
+        # st.warning("⚠️ Monetization keys missing in secrets.toml. Please configure Supabase & Stripe.")
         return None, None
 
     try:
