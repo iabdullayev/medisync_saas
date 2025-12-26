@@ -77,9 +77,9 @@ resource "aws_lambda_function" "api" {
   environment {
     variables = {
       NODE_ENV            = "production"
-      SUPABASE_URL        = "" # Set in AWS Console/Lambda Env Vars
-      SUPABASE_KEY        = "" # Set in AWS Console/Lambda Env Vars
-      STRIPE_API_KEY      = "" # Set in AWS Console/Lambda Env Vars
+      SUPABASE_URL        = var.supabase_url
+      SUPABASE_KEY        = var.supabase_key
+      STRIPE_API_KEY      = var.stripe_api_key
       GROQ_API_KEY        = var.groq_api_key
       STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_14AeVfdef2bk7YJ248bAs00"
     }
