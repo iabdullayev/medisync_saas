@@ -1,14 +1,3 @@
-[server]
-headless = true
-port = 8501
-enableCORS = false
-enableXsrfProtection = false
-enableWebsocketCompression = false
-
-[client]
-toolbarMode = "viewer"
-showSidebarNavigation = false
-
 [theme]
 base = "light"
 primaryColor = "#2563eb"
