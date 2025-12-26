@@ -10,11 +10,131 @@ from src.auth import login_form, check_subscription, create_portal_session
 st.set_page_config(page_title="MediSync SaaS", page_icon="🏥", layout="wide")
 
 # --- CSS for Production Polish (INJECTED FIRST TO PREVENT FLASH) ---
-# --- CSS for Production Polish (DISABLED FOR DEBUGGING) ---
-# st.markdown("""
-#     <link rel="preconnect" href="https://fonts.googleapis.com">
-#     ...
-# """, unsafe_allow_html=True)
+# --- CSS for Production Polish (INJECTED FIRST TO PREVENT FLASH) ---
+st.markdown("""
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+    /* Global Styles */
+    html, body, [class*="css"] {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    .main {
+        background-color: #f8f9fc;
+    }
+
+    /* HIDE STREAMLIT BRANDING & UI ELEMENTS */
+    #MainMenu {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    header {visibility: hidden !important;}
+    
+    /* Hide Fullscreen Button on Images/Plots */
+    button[title="View fullscreen"], 
+    [data-testid="StyledFullScreenButton"],
+    [data-testid="stImage"] button {
+        visibility: hidden !important;
+        display: none !important;
+    }
+    
+    /* Hide the top-right decoration/deploy button if visible */
+    .stDeployButton, [data-testid="stDecoration"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    /* Hide the Status Widget (top right running man) */
+    .stStatusWidget {
+        visibility: hidden !important;
+    }
+    
+    /* Hide Streamlit Toolbar */
+    [data-testid="stToolbar"] {
+        display: none !important;
+    }
+
+    /* Typography */
+    h1, h2, h3 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #0f172a; /* Slate 900 */
+        font-weight: 700;
+        letter-spacing: -0.02em;
+    }
+    p, label, .stMarkdown {
+        color: #334155; /* Slate 700 */
+    }
+    
+    /* Modern Input Fields */
+    .stTextInput > div > div > input, 
+    .stTextArea > div > div > textarea {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 12px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        transition: all 0.2s ease;
+    }
+    .stTextInput > div > div > input:focus, 
+    .stTextArea > div > div > textarea:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    /* Fluid 'Squicle' Button Style (Brightened) */
+    .stButton > button {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); 
+        color: #ffffff !important; 
+        border: none;
+        padding: 0.8rem 1.5rem;
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        border-radius: 12px; 
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -1px rgba(37, 99, 235, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .stButton > button p, .stButton > button * {
+        color: #ffffff !important;
+    }
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3), 0 4px 6px -2px rgba(37, 99, 235, 0.15);
+        color: #ffffff !important;
+    }
+    .stButton > button:active {
+        transform: translateY(0px);
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+    }
+    
+    /* Sidebar Modernization */
+    section[data-testid="stSidebar"] {
+        background-color: #ffffff;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.02);
+        border-right: 1px solid #f1f5f9;
+        padding-top: 2rem;
+    }
+    div[data-testid="stSidebarUserContent"] {
+        padding-top: 2rem;
+    }
+    
+    /* Alerts */
+    .stAlert {
+        background-color: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1e40af;
+        border-radius: 10px;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # --- AUTHENTICATION GATE ---
 # This must run before anything else to protect the app
