@@ -203,6 +203,59 @@ def get_landing_page_styles() -> str:
         transform: translateY(-2px) !important;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
     }
+    
+    /* Glass Card Feature Boxes */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+        min-height: 180px;
+    }
+    
+    .glass-card:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    .glass-card h3 {
+        color: #ffffff;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+    
+    .glass-card p {
+        color: #e0e7ff;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    /* Landing Page Bottom Buttons (Light Purple/Lavender) */
+    div[data-testid="column"]:nth-child(2) button,
+    div[data-testid="column"]:nth-child(3) button,
+    div[data-testid="column"]:nth-child(4) button {
+        background: rgba(167, 139, 250, 0.3) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: #ffffff !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 1.5rem !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    div[data-testid="column"]:nth-child(2) button:hover,
+    div[data-testid="column"]:nth-child(3) button:hover,
+    div[data-testid="column"]:nth-child(4) button:hover {
+        background: rgba(167, 139, 250, 0.5) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2) !important;
+    }
     </style>
     """
 
