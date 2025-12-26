@@ -235,9 +235,8 @@ def get_landing_page_styles() -> str:
     }
     
     /* Landing Page Bottom Buttons (Light Purple/Lavender - Almost Transparent) */
-    div[data-testid="column"]:nth-child(2) button,
-    div[data-testid="column"]:nth-child(3) button,
-    div[data-testid="column"]:nth-child(4) button {
+    /* Target buttons in the footer section specifically */
+    .stButton > button {
         background: rgba(167, 139, 250, 0.15) !important;
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
@@ -249,9 +248,7 @@ def get_landing_page_styles() -> str:
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
     }
     
-    div[data-testid="column"]:nth-child(2) button:hover,
-    div[data-testid="column"]:nth-child(3) button:hover,
-    div[data-testid="column"]:nth-child(4) button:hover {
+    .stButton > button:hover {
         background: rgba(167, 139, 250, 0.25) !important;
         transform: translateY(-2px) !important;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;

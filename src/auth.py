@@ -197,7 +197,7 @@ def login_form():
     st.markdown("<br><br>", unsafe_allow_html=True) # Spacer
 
     # --- HERO CONTENT ---
-    st.markdown('<div class="hero-title">Turn Denials into<br>Approvals.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="hero-title" style="text-align:center;">Turn Denials into<br>Approvals.</div>', unsafe_allow_html=True)
     st.markdown("<h3 style='text-align:center; color:#e9d5ff; margin-bottom:4rem; font-weight:400;'>Generative AI for medical billing advocates.</h3>", unsafe_allow_html=True)
     
     # FEATURE GRID
@@ -213,7 +213,7 @@ def login_form():
     with f2:
             st.markdown("""
         <div class="glass-card">
-            <h3>🧠 AI Reasoning</h3>
+            <h3>🤖 AI Reasoning</h3>
             <p style="color:#f3f4f6; font-size:0.9rem;">Our LLM analyzes clinical context to draft arguments that insurance companies actually listen to.</p>
         </div>
         """, unsafe_allow_html=True)
