@@ -72,6 +72,12 @@ def get_landing_page_styles() -> str:
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
     html, body, [class*="css"], .stMarkdown, .stButton {
         font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    /* Landing page text white - but NOT in modals */
+    html:not([data-testid="stModal"]) body, 
+    [class*="css"]:not([data-testid="stModal"] *),
+    .stMarkdown:not([data-testid="stModal"] *) {
         color: #ffffff !important;
     }
 
@@ -199,21 +205,23 @@ def get_landing_page_styles() -> str:
         box-shadow: 0 0 0 3px rgba(76, 29, 149, 0.1) !important;
     }
 
-    /* Modal Buttons */
+    /* Modal Buttons - More Visible */
     div[data-testid="stModal"] button {
-        background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%) !important;
+        background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%) !important;
         color: #ffffff !important;
         border: none !important;
         border-radius: 12px !important;
         padding: 0.75rem 1.5rem !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
+        font-size: 1rem !important;
         transition: all 0.3s ease !important;
+        box-shadow: 0 4px 6px rgba(91, 33, 182, 0.3) !important;
     }
 
     div[data-testid="stModal"] button:hover {
-        background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%) !important;
+        background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%) !important;
         transform: translateY(-2px) !important;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+        box-shadow: 0 10px 20px rgba(91, 33, 182, 0.4) !important;
     }
     
     /* Glass Card Feature Boxes */
