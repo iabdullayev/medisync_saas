@@ -77,9 +77,9 @@ resource "aws_lambda_function" "api" {
   environment {
     variables = {
       NODE_ENV            = "production"
-      SUPABASE_URL        = "https://nskovpgvtwulyyengchu.supabase.co"
-      SUPABASE_KEY        = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5za292cGd2dHd1bHl5ZW5nY2h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MTg3ODksImV4cCI6MjA4MTQ5NDc4OX0.OgJbVecBzjYFeC4ZI8gyK6z_npc9rqPm7Nyzwuj8JSo"
-      STRIPE_API_KEY      = "sk_test_51Sf8e4PZJw42mYq2DjzBuBg2WNTlUdyiRoM8wBT2KAO2KHi7q2hLgiJ6ojZspiWHYeL7pvSpO8vQTSxAd0Ejbkra00FMPJTLri"
+      SUPABASE_URL        = "" # Set in AWS Console/Lambda Env Vars
+      SUPABASE_KEY        = "" # Set in AWS Console/Lambda Env Vars
+      STRIPE_API_KEY      = "" # Set in AWS Console/Lambda Env Vars
       GROQ_API_KEY        = var.groq_api_key
       STRIPE_PAYMENT_LINK = "https://buy.stripe.com/test_14AeVfdef2bk7YJ248bAs00"
     }

@@ -13,7 +13,8 @@ def init_services():
     STRIPE_KEY = st.secrets.get("STRIPE_API_KEY")
     
     if not SUPABASE_URL or not SUPABASE_KEY or not STRIPE_KEY:
-        # st.warning("⚠️ Monetization keys missing in secrets.toml. Please configure Supabase & Stripe.")
+        # NOTE: If running locally, you must provide these in .streamlit/secrets.toml (ignored by git)
+        # In production, these should be set in the Streamlit Cloud / Lambda Dashboard.
         return None, None
 
     try:
