@@ -70,14 +70,17 @@ def get_landing_page_styles() -> str:
     
     /* Typography - White with correct weights */
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-    html, body, [class*="css"], .stMarkdown, .stButton {
+    html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', sans-serif;
     }
     
-    /* Landing page text white - but NOT in modals */
-    html:not([data-testid="stModal"]) body, 
-    [class*="css"]:not([data-testid="stModal"] *),
-    .stMarkdown:not([data-testid="stModal"] *) {
+    /* White text ONLY on main landing page, NOT in dialogs */
+    .stApp > div:not([role="dialog"]) {
+        color: #ffffff;
+    }
+    
+    /* Ensure main page markdown is white */
+    .stMarkdown:not(div[role="dialog"] *) {
         color: #ffffff !important;
     }
 
@@ -87,198 +90,133 @@ def get_landing_page_styles() -> str:
         border-radius: 12px;
         transition: all 0.2s;
     }
+    div[data-testid="column"] button:hover {
+        transform: translateY(-2px);
+    }
+    
+    /* ============================================ */
+    /* DIALOG FIXES - Ensure dark text visibility  */
+    /* ============================================ */
+    
+    /* Dialog container - force dark text */
+    div[role="dialog"] {
+        color: #1f2937 !important;
+    }
+    
+    /* All dialog text elements - dark and readable */
+    div[role="dialog"] p, 
+    div[role="dialog"] span, 
+    div[role="dialog"] div:not(.stButton),
+    div[role="dialog"] h1,
+    div[role="dialog"] h2,
+    div[role="dialog"] h3,
+    div[role="dialog"] label {
+        color: #1f2937 !important;
+    }
+    
+    /* Dialog markdown content - dark text */
+    div[role="dialog"] .stMarkdown,
+    div[role="dialog"] .stMarkdown *,
+    div[role="dialog"] .stMarkdown p {
+        color: #1f2937 !important;
+    }
+    
+    /* Header Logo Brightness */
+    h3 {
+        color: white !important;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
 
-    /* Hero Section */
+    /* Hero Headlines */
     .hero-title {
-        font-size: 3.5rem;
+        font-size: 5rem;
         font-weight: 800;
         line-height: 1.1;
-        margin-bottom: 1.5rem;
-        background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+        text-align: center;
+        background: linear-gradient(to bottom, #ffffff 40%, #e9d5ff 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .hero-subtitle {
-        font-size: 1.25rem;
-        font-weight: 400;
-        color: #e0e7ff;
         margin-bottom: 2rem;
-        line-height: 1.6;
-    }
-
-    /* CTA Button */
-    .cta-button {
-        background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
-        color: #4c1d95 !important;
-        padding: 1rem 2.5rem;
-        border-radius: 16px;
-        font-weight: 700;
-        font-size: 1.1rem;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        display: inline-block;
-        text-decoration: none;
-    }
-
-    .cta-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Feature Cards */
-    .feature-card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 2rem;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s ease;
-    }
-
-    .feature-card:hover {
-        background: rgba(255, 255, 255, 0.15);
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .feature-icon {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-
-    .feature-title {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-bottom: 0.75rem;
-        color: #ffffff;
-    }
-
-    .feature-description {
-        font-size: 1rem;
-        color: #e0e7ff;
-        line-height: 1.6;
-    }
-
-    /* Modal Styling */
-    div[data-testid="stModal"] {
-        background: rgba(76, 29, 149, 0.95) !important;
-        backdrop-filter: blur(20px);
-    }
-
-    div[data-testid="stModal"] > div {
-        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-        border-radius: 24px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        filter: drop-shadow(0 0 30px rgba(124, 58, 237, 0.5));
     }
     
-    /* Modal Text - Dark Color */
-    div[data-testid="stModal"] * {
-        color: #1f2937 !important;
-    }
-    
-    div[data-testid="stModal"] h1,
-    div[data-testid="stModal"] h2,
-    div[data-testid="stModal"] h3 {
-        color: #111827 !important;
-    }
-
-    /* Input Fields in Modal */
-    div[data-testid="stModal"] input {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border: 1px solid rgba(0, 0, 0, 0.2) !important;
-        border-radius: 12px !important;
-        color: #1f2937 !important;
-        padding: 0.75rem 1rem !important;
-    }
-
-    div[data-testid="stModal"] input::placeholder {
-        color: rgba(0, 0, 0, 0.4) !important;
-    }
-
-    div[data-testid="stModal"] input:focus {
-        border-color: #4c1d95 !important;
-        box-shadow: 0 0 0 3px rgba(76, 29, 149, 0.1) !important;
-    }
-
-    /* Modal Buttons - More Visible */
-    div[data-testid="stModal"] button {
-        background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%) !important;
-        color: #ffffff !important;
-        border: none !important;
-        border-radius: 12px !important;
-        padding: 0.75rem 1.5rem !important;
-        font-weight: 700 !important;
-        font-size: 1rem !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 6px rgba(91, 33, 182, 0.3) !important;
-    }
-
-    div[data-testid="stModal"] button:hover {
-        background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 10px 20px rgba(91, 33, 182, 0.4) !important;
-    }
-    
-    /* Glass Card Feature Boxes */
+    /* Glass Cards for Features */
     .glass-card {
         background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border-radius: 20px;
-        padding: 2rem;
         border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s ease;
-        min-height: 180px;
+        padding: 2rem;
+        height: 100%;
+        transition: transform 0.3s ease;
     }
-    
-    .glass-card:hover {
-        background: rgba(255, 255, 255, 0.15);
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-    
     .glass-card h3 {
-        color: #ffffff;
-        font-size: 1.25rem;
-        font-weight: 700;
-        margin-bottom: 0.75rem;
+         margin-top: 0;
+    }
+    .glass-card:hover {
+         transform: translateY(-5px);
+         background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Inputs - Fix Visibility inside Dialogs */
+    .stTextInput > div > div > input {
+        background-color: rgba(255, 255, 255, 0.9) !important;
+        color: #1e1b4b !important;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        padding: 10px 15px;
     }
     
-    .glass-card p {
-        color: #e0e7ff;
-        font-size: 0.9rem;
-        line-height: 1.6;
-    }
+    /* --- BUTTON STYLES --- */
     
-    /* Landing Page Bottom Buttons (Light Purple/Lavender - Almost Transparent) */
-    /* Target buttons in the footer section specifically */
+    /* 1. Default Buttons (Footer Links) -> Ghost Style */
     .stButton > button {
-        background: rgba(167, 139, 250, 0.2) !important;
-        backdrop-filter: blur(10px);
-        border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
+        background: transparent !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
         color: #ffffff !important;
-        border-radius: 12px !important;
-        padding: 0.75rem 1.5rem !important;
-        font-weight: 600 !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: none !important;
+        transition: all 0.3s ease;
     }
-    
     .stButton > button:hover {
-        background: rgba(167, 139, 250, 0.35) !important;
-        border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-color: #ffffff !important;
+        transform: translateY(-2px);
+    }
+    .stButton > button p {
+         color: #ffffff !important;
+    }
+
+    /* 2. Primary Buttons (Login / Signup) -> Darker Blue for Better Contrast */
+    div[data-testid="column"] .stButton > button[kind="primary"],
+    button[kind="primary"] {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%) !important; 
+        color: #ffffff !important; 
+        border: none !important;
+        padding: 0.6rem 1.2rem;
+        border-radius: 9999px !important;
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.5) !important;
+        font-weight: 600 !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
     }
     
-    /* Hide hyperlink icons next to headings */
-    .glass-card h3 a {
-        display: none !important;
+    /* Primary button text - force white and bold */
+    button[kind="primary"] p {
+        color: #ffffff !important;
+        font-weight: 600 !important;
     }
+    
+    div[data-testid="column"] .stButton > button[kind="primary"]:hover,
+    button[kind="primary"]:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+        box-shadow: 0 8px 15px rgba(37, 99, 235, 0.4) !important;
+        transform: translateY(-2px);
+    }
+    
+    /* Hide Decorations */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
     </style>
     """
 
