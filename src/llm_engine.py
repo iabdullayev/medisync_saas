@@ -1,11 +1,18 @@
 import os
 from groq import Groq
 from src.sanitization import sanitize_name, sanitize_address
+from src.constants import LLM_MODEL, LLM_TEMPERATURE
+from src.errors import LLMError
 
 class CloudLLM:
-    def __init__(self, api_key):
+    def __init__(self, api_key: str):
+        """Initialize CloudLLM client.
+        
+        Args:
+            api_key: Groq API key
+        """
         self.client = Groq(api_key=api_key)
-        self.model = "llama-3.1-8b-instant"
+        self.model = LLM_MODEL
 
     def draft_appeal(self, context, advocate_details):
         """Draft an appeal letter with sanitized inputs to prevent prompt injection.
@@ -57,13 +64,16 @@ INSTRUCTIONS:
 6. Keep the tone professional and formal.
 """
         
-        chat_completion = self.client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": "You are a helpful medical billing advocate assistant."},
-                {"role": "user", "content": prompt}
-            ],
-            model=self.model,
-            temperature=0.1,
-        )
-        
-        return chat_completion.choices[0].message.content
+        try:
+            chat_completion = self.client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": "You are a helpful medical billing advocate assistant."},
+                    {"role": "user", "content": prompt}
+                ],
+                model=self.model,
+                temperature=LLM_TEMPERATURE,
+            )
+            
+            return chat_completion.choices[0].message.content
+        except Exception as e:
+            raise LLMError(f"Failed to generate appeal letter: {str(e)}") from e
