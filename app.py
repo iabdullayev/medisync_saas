@@ -5,6 +5,7 @@ from src.pipeline import MediSyncPipeline
 from src.config import AppConfig
 from src.styles import get_base_styles, get_app_styles
 from src.auth import login_form, check_subscription, create_portal_session
+from src.rate_limiter import RateLimiter
 
 st.set_page_config(page_title="MediSync SaaS", page_icon="🏥", layout="wide")
 
@@ -97,8 +98,13 @@ def get_pipeline(api_key):
     return MediSyncPipeline(api_key)
 
 # Initialize Session State to hold data across re-runs
+# Initialize session state for appeal results
 if "appeal_result" not in st.session_state:
     st.session_state["appeal_result"] = None
+
+# Initialize rate limiter (5 requests per 60 seconds per user)
+if "rate_limiter" not in st.session_state:
+    st.session_state.rate_limiter = RateLimiter(max_requests=5, window_seconds=60)
 
 uploaded_file = st.file_uploader("Upload Denial Letter", type=["pdf"])
 
@@ -109,6 +115,14 @@ if uploaded_file and st.session_state["appeal_result"] and st.session_state["app
 if uploaded_file:
     # We use a button to trigger processing
     if st.button("Draft Appeal"):
+        # Check rate limit before processing
+        allowed, reset_time = st.session_state.rate_limiter.is_allowed(user.email)
+        
+        if not allowed:
+            st.error(f"⏱️ **Rate limit exceeded.** Please wait {reset_time} seconds before trying again.")
+            st.info(f"💡 **Tip:** You can make up to 5 requests per minute to prevent system abuse.")
+            st.stop()
+        
         with st.spinner("Analyzing Medical Policy & Drafting..."):
             try:
                 # 1. Save to Temp File
