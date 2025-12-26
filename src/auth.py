@@ -2,152 +2,55 @@ import streamlit as st
 import time
 import re
 import string
+from functools import wraps
 from supabase import create_client, Client
 import stripe
 
-# Initialize specific to this module so it doesn't break if keys are missing initially
+from src.config import AppConfig
+from src.styles import get_landing_page_styles
+
+def handle_auth_errors(func):
+    """Decorator to handle authentication errors consistently."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            friendly_msg = str(e).replace("AuthApiError: ", "").replace("Error: ", "")
+            st.markdown(
+                f"<small style='color: #ef4444; font-weight: 500;'>⚠️ {friendly_msg}</small>",
+                unsafe_allow_html=True
+            )
+            return None
+    return wrapper
+
+
 def init_services():
-    # Load secrets safely
-    SUPABASE_URL = st.secrets.get("SUPABASE_URL")
-    SUPABASE_KEY = st.secrets.get("SUPABASE_KEY")
-    STRIPE_KEY = st.secrets.get("STRIPE_API_KEY")
+    """Initialize Supabase and Stripe services using centralized config.
     
-    if not SUPABASE_URL or not SUPABASE_KEY or not STRIPE_KEY:
+    Returns:
+        tuple: (supabase_client, stripe_module) or (None, None) if config incomplete
+    """
+    config = AppConfig.from_secrets()
+    
+    if not config.is_auth_enabled():
         # NOTE: If running locally, you must provide these in .streamlit/secrets.toml (ignored by git)
         # In production, these should be set in the Streamlit Cloud / Lambda Dashboard.
         return None, None
 
     try:
-        supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        supabase: Client = create_client(config.supabase_url, config.supabase_key)
     except Exception as e:
         st.warning(f"⚠️ Auth Error: Invalid Supabase Credentials. ({str(e)})")
         print(f"Supabase Init Error: {e}")
         return None, None
 
-    stripe.api_key = STRIPE_KEY
+    stripe.api_key = config.stripe_api_key
     return supabase, stripe
 
 def landing_page_css():
-    st.markdown("""
-        <style>
-        /* Lighter, Dreamy Purple Gradient */
-        .stApp {
-            background: linear-gradient(135deg, #4c1d95 0%, #8b5cf6 40%, #ddd6fe 100%);
-            background-attachment: fixed;
-        }
-        
-        /* Typography - White with correct weights */
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        html, body, [class*="css"], .stMarkdown, .stButton {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #ffffff !important;
-        }
-
-        /* Nav Buttons (Top Right) */
-        div[data-testid="column"] button {
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            transition: all 0.2s;
-        }
-        div[data-testid="column"] button:hover {
-            transform: translateY(-2px);
-        }
-        
-        /* Specific Fix for Dialog Text visibility (Markdown content) */
-        div[role="dialog"] p, div[role="dialog"] span, div[role="dialog"] div {
-            color: #1f2937 !important;
-        }
-        
-        /* Header Logo Brightness */
-        h3 {
-            color: white !important;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        /* Hero Headlines */
-        .hero-title {
-            font-size: 5rem;
-            font-weight: 800;
-            line-height: 1.1;
-            text-align: center;
-            background: linear-gradient(to bottom, #ffffff 40%, #e9d5ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 2rem;
-            filter: drop-shadow(0 0 30px rgba(124, 58, 237, 0.5));
-        }
-        
-        /* Glass Cards for Features */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 2rem;
-            height: 100%;
-            transition: transform 0.3s ease;
-        }
-        .glass-card h3 {
-             margin-top: 0;
-        }
-        .glass-card:hover {
-             transform: translateY(-5px);
-             background: rgba(255, 255, 255, 0.15);
-        }
-
-        /* Inputs - Fix Visibility inside Dialogs */
-        .stTextInput > div > div > input {
-            background-color: rgba(255, 255, 255, 0.9) !important;
-            color: #1e1b4b !important;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            padding: 10px 15px;
-        }
-        
-        /* --- BUTTON STYLES --- */
-        
-        /* 1. Default Buttons (Footer Links) -> Ghost Style */
-        .stButton > button {
-            background: transparent !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
-            color: #ffffff !important;
-            box-shadow: none !important;
-            transition: all 0.3s ease;
-        }
-        .stButton > button:hover {
-            background: rgba(255, 255, 255, 0.1) !important;
-            border-color: #ffffff !important;
-            transform: translateY(-2px);
-        }
-        .stButton > button p {
-             color: #ffffff !important;
-        }
-
-        /* 2. Primary Buttons (Login / Signup) -> Blue Pill Style */
-        /* Target buttons with specific kind or class if possible, or fallback to the specific columns */
-        div[data-testid="column"] .stButton > button[kind="primary"],
-        button[kind="primary"] {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important; 
-            color: #ffffff !important; 
-            border: none !important;
-            padding: 0.6rem 1.2rem;
-            border-radius: 9999px !important;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3) !important;
-        }
-        div[data-testid="column"] .stButton > button[kind="primary"]:hover,
-        button[kind="primary"]:hover {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
-            box-shadow: 0 8px 15px rgba(37, 99, 235, 0.4) !important;
-            transform: translateY(-2px);
-        }
-        
-        /* Hide Decorations */
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        header {visibility: hidden;}
-        </style>
-    """, unsafe_allow_html=True)
+    """Apply landing page CSS styles using shared styles module."""
+    st.markdown(get_landing_page_styles(), unsafe_allow_html=True)
 
 
 # --- SECURITY VALIDATORS ---
