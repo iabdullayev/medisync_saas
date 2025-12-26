@@ -9,32 +9,7 @@ from src.auth import login_form, check_subscription, create_portal_session
 
 st.set_page_config(page_title="MediSync SaaS", page_icon="🏥", layout="wide")
 
-
-
-# --- AUTHENTICATION GATE ---
-# This must run before anything else to protect the app
-user = login_form()
-if not user:
-    st.stop()
-
-# COMPATIBILITY FIX: Ensure user is an object, not a dict (handles legacy session state)
-import types
-if isinstance(user, dict):
-    user = types.SimpleNamespace(**user)
-
-# Check Subscription
-is_subscribed = check_subscription(user.email)
-if not is_subscribed:
-    payment_link = st.secrets.get("STRIPE_PAYMENT_LINK", "https://stripe.com")
-    
-    st.warning("💳 Subscription Required")
-    st.markdown("Your 7-day free trial has expired or you do not have an active subscription.")
-    st.markdown(f"[Manage Subscription]({payment_link})") 
-    st.stop()
-
-
-
-# --- CSS for Production Polish (MOVED BACK) ---
+# --- CSS for Production Polish (INJECTED FIRST TO PREVENT FLASH) ---
 st.markdown("""
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -159,6 +134,28 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
+# --- AUTHENTICATION GATE ---
+# This must run before anything else to protect the app
+user = login_form()
+if not user:
+    st.stop()
+
+# COMPATIBILITY FIX: Ensure user is an object, not a dict (handles legacy session state)
+import types
+if isinstance(user, dict):
+    user = types.SimpleNamespace(**user)
+
+# Check Subscription
+is_subscribed = check_subscription(user.email)
+if not is_subscribed:
+    payment_link = st.secrets.get("STRIPE_PAYMENT_LINK", "https://stripe.com")
+    
+    st.warning("💳 Subscription Required")
+    st.markdown("Your 7-day free trial has expired or you do not have an active subscription.")
+    st.markdown(f"[Manage Subscription]({payment_link})") 
+    st.stop()
+
 
 
 # Initialize Page State
