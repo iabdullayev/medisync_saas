@@ -10,6 +10,9 @@ OCR_DPI: Final[int] = 200
 OCR_PSM_MODE: Final[str] = '--psm 6'
 """Tesseract Page Segmentation Mode. PSM 6 assumes uniform text block."""
 
+MAX_PDF_PAGES: Final[int] = 50
+"""Maximum number of PDF pages to process (prevents abuse and OOM errors)."""
+
 # ============================================================================
 # LLM Configuration
 # ============================================================================

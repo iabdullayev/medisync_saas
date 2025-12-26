@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import tempfile
+from typing import Optional
 from src.pipeline import MediSyncPipeline
 from src.config import AppConfig
 from src.styles import get_base_styles, get_app_styles
@@ -90,9 +91,16 @@ if not api_key:
     # st.warning("⚠️ Authentication Required. Please enter your API credentials in the sidebar.")
     st.stop()
 
-# Initialize Cached Pipeline (Lazy Load)
-@st.cache_resource
-def get_pipeline(api_key):
+# Initialize Pipeline (no caching needed - initialization is fast)
+def get_pipeline(api_key: str) -> Optional[MediSyncPipeline]:
+    """Create a pipeline instance.
+    
+    Args:
+        api_key: Groq API key
+        
+    Returns:
+        Pipeline instance or None if key is missing
+    """
     if not api_key:
         return None
     return MediSyncPipeline(api_key)
