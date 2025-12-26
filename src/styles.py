@@ -253,6 +253,11 @@ def get_landing_page_styles() -> str:
         transform: translateY(-2px) !important;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
     }
+    
+    /* Hide hyperlink icons next to headings */
+    .glass-card h3 a {
+        display: none !important;
+    }
     </style>
     """
 
