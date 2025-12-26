@@ -237,21 +237,22 @@ def get_landing_page_styles() -> str:
     /* Landing Page Bottom Buttons (Light Purple/Lavender - Almost Transparent) */
     /* Target buttons in the footer section specifically */
     .stButton > button {
-        background: rgba(167, 139, 250, 0.15) !important;
+        background: rgba(167, 139, 250, 0.2) !important;
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.3) !important;
         color: #ffffff !important;
         border-radius: 12px !important;
         padding: 0.75rem 1.5rem !important;
         font-weight: 600 !important;
         transition: all 0.3s ease !important;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
     }
     
     .stButton > button:hover {
-        background: rgba(167, 139, 250, 0.25) !important;
+        background: rgba(167, 139, 250, 0.35) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
         transform: translateY(-2px) !important;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
     }
     
     /* Hide hyperlink icons next to headings */
