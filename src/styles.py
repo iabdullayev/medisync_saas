@@ -164,34 +164,45 @@ def get_landing_page_styles() -> str:
     }
 
     div[data-testid="stModal"] > div {
-        background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%);
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
         border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.1);
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    }
+    
+    /* Modal Text - Dark Color */
+    div[data-testid="stModal"] * {
+        color: #1f2937 !important;
+    }
+    
+    div[data-testid="stModal"] h1,
+    div[data-testid="stModal"] h2,
+    div[data-testid="stModal"] h3 {
+        color: #111827 !important;
     }
 
     /* Input Fields in Modal */
     div[data-testid="stModal"] input {
-        background: rgba(255, 255, 255, 0.1) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid rgba(0, 0, 0, 0.2) !important;
         border-radius: 12px !important;
-        color: #ffffff !important;
+        color: #1f2937 !important;
         padding: 0.75rem 1rem !important;
     }
 
     div[data-testid="stModal"] input::placeholder {
-        color: rgba(255, 255, 255, 0.5) !important;
+        color: rgba(0, 0, 0, 0.4) !important;
     }
 
     div[data-testid="stModal"] input:focus {
-        border-color: rgba(255, 255, 255, 0.4) !important;
-        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+        border-color: #4c1d95 !important;
+        box-shadow: 0 0 0 3px rgba(76, 29, 149, 0.1) !important;
     }
 
     /* Modal Buttons */
     div[data-testid="stModal"] button {
-        background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%) !important;
-        color: #4c1d95 !important;
+        background: linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%) !important;
+        color: #ffffff !important;
         border: none !important;
         border-radius: 12px !important;
         padding: 0.75rem 1.5rem !important;
@@ -200,6 +211,7 @@ def get_landing_page_styles() -> str:
     }
 
     div[data-testid="stModal"] button:hover {
+        background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%) !important;
         transform: translateY(-2px) !important;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
     }
